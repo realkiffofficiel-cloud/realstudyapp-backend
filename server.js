@@ -11,16 +11,18 @@ const PORT = 3002;
 const DB_FILE = path.join(__dirname, 'db.json');
 const JWT_SECRET = process.env.JWT_SECRET || 'realstudyapp-secret-key-change-in-prod';
 
-// ── File-based persistent database ───────────────────────────────────────────
+// ── Database (file local, mémoire sur Vercel) ─────────────────────────────────
 function loadDb() {
-  if (fs.existsSync(DB_FILE)) {
-    try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch (e) {}
-  }
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    }
+  } catch (e) {}
   return { users: [], orders: [], nextOrderId: 1 };
 }
 
 function saveDb() {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  try { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); } catch (e) {}
 }
 
 let db = loadDb();
